@@ -77,5 +77,6 @@ jobs:
         with:
           name: ruff_${{ matrix.os }}
           path: |
+            ruff/target/release/*.dll
+            ruff/target/release/*.exe
             ruff/target/release/ruff
-            ruff/target/release/ruff.exe

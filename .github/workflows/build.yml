@@ -46,6 +46,7 @@ jobs:
 
       - name: Cargo fix
         run: |
+          cat .cargo/config.toml
           cargo fix --all --allow-dirty
           cargo clippy --fix --all --allow-dirty
 

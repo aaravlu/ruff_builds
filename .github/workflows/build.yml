@@ -35,7 +35,7 @@ jobs:
 
       - name: Replace cargo config file
         run: |
-          MoveItem -Path .cargo/config.toml -Destination .cargo/ -Force
+          Move-Item -Path .cargo/config.toml -Destination .cargo/ -Force
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@v1

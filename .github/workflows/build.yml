@@ -64,8 +64,9 @@ jobs:
 
       - name: Cargo update
         working-directory: ruff
+        shell: pwsh
         run: |
-          rm -rf Cargo.lock
+          Remove-Item Cargo.lock -Force
           cargo update
 
       - name: Cargo fix

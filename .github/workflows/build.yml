@@ -23,15 +23,15 @@ jobs:
           New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
             -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
 
+      - name: Checkout self
+        uses: actions/checkout@v4
+
       - name: Checkout ruff
         uses: actions/checkout@v4
         with:
           repository: astral-sh/ruff
           ref: refs/tags/0.14.2
           path: .
-
-      # - name: Checkout self
-      #   uses: actions/checkout@v4
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@v1

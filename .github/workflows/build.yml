@@ -65,8 +65,7 @@ jobs:
       - name: Cargo fix
         working-directory: ruff
         run: |
-          cargo fix --all --allow-dirty
-          cargo clippy --fix --all --allow-dirty
+          cargo fix --workspace --allow-dirty
 
       - name: Build
         working-directory: ruff

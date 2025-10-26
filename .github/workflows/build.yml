@@ -31,7 +31,12 @@ jobs:
         with:
           repository: astral-sh/ruff
           ref: refs/tags/0.14.2
-          path: .
+          path: ruff
+
+      - name: Replace cargo config
+        run: |
+          mv -f .cargo/config.toml ruff/.cargo/config.toml
+          cat ruff/.cargo/config.toml
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@v1
@@ -43,15 +48,11 @@ jobs:
         uses: Swatinem/rust-cache@v2
         with:
           key: ${{ matrix.os }}-${{ hashFiles('Cargo.lock') }}
-
-      - name: Replace cargo config
-        run: |
-          ls -al
-          mv -f config.toml .cargo
+          workspaces: "ruff -> target"
 
       - name: Cargo fix
+        working-directory: ruff
         run: |
-          cat .cargo/config.toml
           cargo fix --all --allow-dirty
           cargo clippy --fix --all --allow-dirty
 
@@ -64,6 +65,7 @@ jobs:
           sdk: 10.0.19041.0
 
       - name: Build
+        working-directory: ruff
         run: |
           cargo b -r
 
@@ -72,5 +74,5 @@ jobs:
         with:
           name: ruff
           path: |
-            target/release/ruff
-            target/release/ruff.exe
+            ruff/target/release/ruff
+            ruff/target/release/ruff.exe

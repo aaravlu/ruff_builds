@@ -62,6 +62,12 @@ jobs:
           key: ${{ matrix.os }}-${{ hashFiles('Cargo.lock') }}
           workspaces: "ruff -> target"
 
+      - name: Cargo update
+        working-directory: ruff
+        run: |
+          rm -rf Cargo.lock
+          cargo update
+
       - name: Cargo fix
         working-directory: ruff
         run: |
@@ -77,6 +83,17 @@ jobs:
         with:
           name: ruff_${{ matrix.os }}
           path: |
+            ruff/target/release/*.so
             ruff/target/release/*.dll
-            ruff/target/release/*.exe
+
+            ruff/target/release/ty
+            ruff/target/release/ty.exe
+
+            ruff/target/release/ty_completion_eval
+            ruff/target/release/ty_completion_eval.exe
+
             ruff/target/release/ruff
+            ruff/target/release/ruff.exe
+
+            ruff/target/release/ruff_python_formatter
+            ruff/target/release/ruff_python_formatter.exe

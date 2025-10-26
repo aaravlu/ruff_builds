@@ -56,12 +56,6 @@ jobs:
           toolset: 14.29
           sdk: 10.0.19041.0
 
-      - name: Rust Cache
-        uses: Swatinem/rust-cache@v2
-        with:
-          key: ${{ matrix.os }}-${{ hashFiles('Cargo.lock') }}
-          workspaces: "ruff -> target"
-
       - name: Cargo update
         working-directory: ruff
         shell: pwsh

@@ -46,6 +46,7 @@ jobs:
 
       - name: Replace cargo config
         run: |
+          ls -al
           mv -f config.toml .cargo
 
       - name: Cargo fix

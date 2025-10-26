@@ -44,6 +44,10 @@ jobs:
         with:
           key: ${{ matrix.os }}-${{ hashFiles('Cargo.lock') }}
 
+      - name: Replace cargo config
+        run: |
+          mv -f config.toml .cargo
+
       - name: Cargo fix
         run: |
           cat .cargo/config.toml

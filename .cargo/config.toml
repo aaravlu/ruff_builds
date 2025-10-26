@@ -4,8 +4,8 @@ benchmark = "bench -p ruff_benchmark --bench linter --bench formatter --"
 
 [target.'cfg(target_os = "windows")']
 rustflags = [
-  # "-C",
-  # "target-feature=+crt-static",
+  "-C",
+  "target-feature=+crt-static",
   "-C",
   "target-cpu=native",
   "--cfg",

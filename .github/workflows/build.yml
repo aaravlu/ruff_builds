@@ -30,8 +30,8 @@ jobs:
           ref: refs/tags/0.14.2
           path: .
 
-      - name: Checkout self
-        uses: actions/checkout@v4
+      # - name: Checkout self
+      #   uses: actions/checkout@v4
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@v1

@@ -53,6 +53,14 @@ jobs:
           cargo fix --all --allow-dirty
           cargo clippy --fix --all --allow-dirty
 
+      - name: Setup MSVC
+        if: matrix.os == 'windows-2022'
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+          toolset: 14.29
+          sdk: 10.0.19041.0
+
       - name: Build
         run: |
           cargo b -r

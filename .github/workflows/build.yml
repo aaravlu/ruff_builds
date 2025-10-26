@@ -35,7 +35,7 @@ jobs:
 
       - name: Replace cargo config
         run: |
-          mv -f .cargo/config.toml ruff/.cargo/config.toml
+          Move-Item -Path ".cargo/config.toml" -Destination "ruff/.cargo" -Force
           cat ruff/.cargo/config.toml
 
       - name: Install Rust

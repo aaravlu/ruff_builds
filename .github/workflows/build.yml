@@ -34,6 +34,7 @@ jobs:
           path: ruff
 
       - name: Replace cargo config
+        shell: pwsh
         run: |
           Move-Item -Path ".cargo/config.toml" -Destination "ruff/.cargo" -Force
           cat ruff/.cargo/config.toml

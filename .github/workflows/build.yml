@@ -12,16 +12,20 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Enable long paths in git
+      - name: Windows config
         if: matrix.os == 'windows-2022'
         run: |
           git config --system core.longpaths true
+          echo "Enabled long paths in git"
 
-      - name: Enable long paths in windows
-        if: matrix.os == 'windows-2022'
-        run: |
-          New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" `
-            -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+          New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force
+          echo "Enabled long paths in registry"
+
+          $git_link = "C:\Program Files\Git\usr\bin\link.exe"
+          if (Test-Path $git_link) {
+              Rename-Item $git_link "_link.exe"
+          }
+          echo "Removed link.exe in git"
 
       - name: Checkout self
         uses: actions/checkout@v4
@@ -30,23 +34,21 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: astral-sh/ruff
-          ref: refs/tags/0.14.2
+          ref: refs/tags/0.14.5
           path: ruff
 
-      - name: Replace cargo config
-        shell: pwsh
+      - name: Copy config
+        shell: bash
         run: |
-          Move-Item -Path ".cargo/config.toml" -Destination "ruff/.cargo" -Force
-          cat ruff/.cargo/config.toml
+          mkdir -p ruff/.cargo
+          cp -f .cargo/config.toml ruff/.cargo/
 
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@v1
-        with:
-          toolchain: stable
-
-      - name: Install clippy
+      - name: Cargo update
+        working-directory: ruff
+        shell: bash
         run: |
-          rustup component add clippy
+          rm -f Cargo.lock
+          cargo update
 
       - name: Setup MSVC
         if: matrix.os == 'windows-2022'
@@ -56,24 +58,12 @@ jobs:
           toolset: 14.29
           sdk: 10.0.19041.0
 
-      - name: Cargo update
-        working-directory: ruff
-        shell: pwsh
-        run: |
-          Remove-Item Cargo.lock -Force
-          cargo update
-
-      - name: Cargo fix
-        working-directory: ruff
-        run: |
-          cargo fix --workspace --allow-dirty
-
       - name: Build
         working-directory: ruff
         run: |
           cargo b -r
 
-      - name: Archive binary
+      - name: Archive
         uses: actions/upload-artifact@v4
         with:
           name: ruff_${{ matrix.os }}

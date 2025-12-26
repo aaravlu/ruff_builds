@@ -28,27 +28,20 @@ jobs:
           echo "Removed link.exe in git"
 
       - name: Checkout self
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
-      - name: Checkout ruff
-        uses: actions/checkout@v4
+      - name: Checkout target
+        uses: actions/checkout@v6
         with:
           repository: astral-sh/ruff
-          ref: refs/tags/0.14.5
+          ref: refs/tags/0.14.10
           path: ruff
 
       - name: Copy config
         shell: bash
         run: |
           mkdir -p ruff/.cargo
-          cp -f .cargo/config.toml ruff/.cargo/
-
-      - name: Cargo update
-        working-directory: ruff
-        shell: bash
-        run: |
-          rm -f Cargo.lock
-          cargo update
+          cp -f .cargo/config.toml ruff/.cargo
 
       - name: Setup MSVC
         if: matrix.os == 'windows-2022'
@@ -60,11 +53,14 @@ jobs:
 
       - name: Build
         working-directory: ruff
+        shell: bash
         run: |
+          rm -f Cargo.lock
+          cargo update
           cargo b -r
 
       - name: Archive
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: ruff_${{ matrix.os }}
           path: |

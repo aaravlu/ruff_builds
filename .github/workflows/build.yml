@@ -6,6 +6,11 @@ on:
 
 jobs:
   build:
+    env:
+      PROJECT_REPOSITORY: astral-sh/ruff
+      PROJECT_VERSION: v0.14.14
+      PROJECT_PATH: ruff
+      PROJECT_BIN: ruff
     strategy:
       matrix:
         os: [ubuntu-24.04, windows-2022]
@@ -13,7 +18,7 @@ jobs:
 
     steps:
       - name: Windows config
-        if: matrix.os == 'windows-2022'
+        if: runner.os == 'Windows'
         run: |
           git config --system core.longpaths true
           echo "Enabled long paths in git"
@@ -37,14 +42,15 @@ jobs:
           ref: refs/tags/0.14.10
           path: ruff
 
-      - name: Copy config
+      - name: Copy config file
         shell: bash
+        working-directory: ${{ env.PROJECT_PATH }}
         run: |
-          mkdir -p ruff/.cargo
-          cp -f .cargo/config.toml ruff/.cargo
+          mkdir -p .cargo
+          cp -f ../.cargo/config.toml .cargo
 
       - name: Setup MSVC
-        if: matrix.os == 'windows-2022'
+        if: runner.os == 'Windows'
         uses: ilammy/msvc-dev-cmd@v1
         with:
           arch: x64
@@ -52,29 +58,27 @@ jobs:
           sdk: 10.0.19041.0
 
       - name: Build
-        working-directory: ruff
         shell: bash
+        working-directory: ${{ env.PROJECT_PATH }}
         run: |
           rm -f Cargo.lock
           cargo update
           cargo b -r
 
       - name: Archive
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
-          name: ruff_${{ matrix.os }}
+          name: ${{ env.PROJECT_BIN }}_${{ runner.os }}
           path: |
-            ruff/target/release/*.so
-            ruff/target/release/*.dll
+            ${{ env.PROJECT_PATH }}/target/release/*.so
+            ${{ env.PROJECT_PATH }}/target/release/*.dll
 
-            ruff/target/release/ty
-            ruff/target/release/ty.exe
+            ${{ env.PROJECT_PATH }}/target/release/ty
+            ${{ env.PROJECT_PATH }}/target/release/ty.exe
+            ${{ env.PROJECT_PATH }}/target/release/ty_completion_eval
+            ${{ env.PROJECT_PATH }}/target/release/ty_completion_eval.exe
+            ${{ env.PROJECT_PATH }}/target/release/ruff_python_formatter
+            ${{ env.PROJECT_PATH }}/target/release/ruff_python_formatter.exe
 
-            ruff/target/release/ty_completion_eval
-            ruff/target/release/ty_completion_eval.exe
-
-            ruff/target/release/ruff
-            ruff/target/release/ruff.exe
-
-            ruff/target/release/ruff_python_formatter
-            ruff/target/release/ruff_python_formatter.exe
+            ${{ env.PROJECT_PATH }}/target/release/${{ env.PROJECT_BIN }}
+            ${{ env.PROJECT_PATH }}/target/release/${{ env.PROJECT_BIN }}.exe

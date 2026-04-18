@@ -1,20 +1,13 @@
-[alias]
-dev = "run --package ruff_dev --bin ruff_dev"
-benchmark = "bench -p ruff_benchmark --bench linter --bench formatter --"
-
-[target.'cfg(target_os = "windows")']
+[build]
 rustflags = [
-  # "-C",
-  # "target-feature=+crt-static",
-  "-C",
-  "target-cpu=native",
-  "--cfg",
-  "windows_slim_errors",
+    "-C", "target-cpu=znver3"
 ]
-[target.'cfg(target_os = "linux")']
+[target.'cfg(windows)']
 rustflags = [
-  "-C",
-  "target-cpu=native"
+    "--cfg", "windows_slim_errors"
+]
+[target.'cfg(unix)']
+rustflags = [
 ]
 
 [profile.release]
